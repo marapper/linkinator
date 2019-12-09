@@ -1,32 +1,38 @@
 import * as cheerio from 'cheerio';
 import { URL } from 'url';
 
-const linksAttr = {
-  background: ['body'],
-  cite: ['blockquote', 'del', 'ins', 'q'],
-  data: ['object'],
-  href: ['a', 'area', 'embed', 'link'],
-  icon: ['command'],
-  longdesc: ['frame', 'iframe'],
-  manifest: ['html'],
-  poster: ['video'],
-  pluginspage: ['embed'],
-  pluginurl: ['embed'],
-  src: [
-    'audio',
-    'embed',
-    'frame',
-    'iframe',
-    'img',
-    'input',
-    'script',
-    'source',
-    'track',
-    'video',
-  ],
-  srcset: ['img', 'source'],
-  style: [''],
-} as { [index: string]: string[] };
+export interface AttributeRules {
+  [index: string]: string[];
+}
+
+export function getBaseLinkAttributes(): AttributeRules {
+  return {
+    background: ['body'],
+    cite: ['blockquote', 'del', 'ins', 'q'],
+    data: ['object'],
+    href: ['a', 'area', 'embed', 'link'],
+    icon: ['command'],
+    longdesc: ['frame', 'iframe'],
+    manifest: ['html'],
+    poster: ['video'],
+    pluginspage: ['embed'],
+    pluginurl: ['embed'],
+    src: [
+      'audio',
+      'embed',
+      'frame',
+      'iframe',
+      'img',
+      'input',
+      'script',
+      'source',
+      'track',
+      'video',
+    ],
+    srcset: ['img', 'source'],
+    style: [''],
+  };
+}
 
 export interface ParsedUrl {
   link: string;
@@ -34,7 +40,11 @@ export interface ParsedUrl {
   url?: URL;
 }
 
-export function getLinks(source: string, baseUrl: string): ParsedUrl[] {
+export function getLinks(
+  source: string,
+  baseUrl: string,
+  linksAttr: AttributeRules
+): ParsedUrl[] {
   const $ = cheerio.load(source);
   const links = new Array<string>();
   Object.keys(linksAttr).forEach(attr => {

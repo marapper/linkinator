@@ -189,7 +189,24 @@ describe('linkinator', () => {
 
   it('should detect broken image links in inline styles', async () => {
     const results = await check({ path: 'test/fixtures/style' });
+    assert.strictEqual(
+      results.links.filter(x => x.state === LinkState.BROKEN).length,
+      2
+    );
+    assert.strictEqual(
+      results.links.filter(x => x.state === LinkState.OK).length,
+      2
+    );
+  });
 
+  it('should detect broken custom attributes', async () => {
+    const results = await check({
+      path: 'test/fixtures/linksAttributes',
+      linksAttributes: {
+        'data-img': ['img'],
+        'data-src': ['img', 'div'],
+      },
+    });
     assert.strictEqual(
       results.links.filter(x => x.state === LinkState.BROKEN).length,
       2
